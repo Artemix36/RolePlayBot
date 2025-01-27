@@ -21,6 +21,16 @@ class Programm
             builder.AddFilter("System", LogLevel.Debug).SetMinimumLevel(LogLevel.Information);
         });
         ILogger logger = loggerFactory.CreateLogger("Program");
+        try
+        {
+            string path = "BotVars.json";
+            IConfiguration configuration = new ConfigurationBuilder().AddJsonFile(path, optional: false, reloadOnChange: true).Build();
+            Bot? bot = configuration.Get<Bot>();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError("Failed to get vars: {exception}", ex.Message);
+        }
     }
 }
 
