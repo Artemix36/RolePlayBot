@@ -20,28 +20,27 @@ class Programm
                 });
             builder.AddFilter("System", LogLevel.Debug).SetMinimumLevel(LogLevel.Information);
         });
-        ILogger logger = loggerFactory.CreateLogger("Program");
+        ILogger logger = loggerFactory.CreateLogger("Main");
+        
     }
 }
 
 sealed class Bot
 {
-        public static string TGtoken {internal get; set;} = string.Empty;
-        public static string? DBBaseURL {internal get; set;} = string.Empty;
-        public static string? StarttupMessage {internal get; set;} = string.Empty;
+        public BotVars botVars { internal get; pub; ic set; };
         static ILogger BotLogger;
-        Bot(ILoggerFactory loggerFactory, string configTGtoken, string? configDBBaseURL, string? configStarttupMessage)
-        {
-            BotLogger = loggerFactory.CreateLogger("Bot");
-            TGtoken = configTGtoken;
-            DBBaseURL = configDBBaseURL;
-            StarttupMessage = configStarttupMessage;
+
+        public Bot(ILoggerFactory loggerFactory, BotVars ConfigBotVars)
+        {   
+            BotLogger = loggerFactory.CreateLogger("RPBot");
+            botVars = ConfigBotVars;
         }
+
         static void Start()
         {
             try
             {
-                TelegramBotClient telegram_bot = new TelegramBotClient(Bot.TGtoken);
+                TelegramBotClient telegram_bot = new TelegramBotClient(TGtoken);
                 ReceiverOptions receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = new[]
@@ -58,4 +57,11 @@ sealed class Bot
                 BotLogger.LogError("Failed to start: {exception}", ex.Message);
             }
         }
+}
+
+sealed class BotVars
+{
+    public string TGtoken { internal get; set; } = string.Empty;
+    public string? DBBaseURL { internal get; set; } = string.Empty;
+    public string? StarttupMessage { internal get; set; } = string.Empty;
 }
