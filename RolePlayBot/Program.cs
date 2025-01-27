@@ -25,7 +25,17 @@ class Programm
         {
             string path = "BotVars.json";
             IConfiguration configuration = new ConfigurationBuilder().AddJsonFile(path, optional: false, reloadOnChange: true).Build();
-            Bot? bot = configuration.Get<Bot>();
+            BotVars? BotVars = configuration.Get<BotVars>();
+
+            if(BotVars is not null && BotVars.TGtoken != string.Empty)
+            {
+                Bot RPBot = new Bot(loggerFactory, BotVars);
+                RPBot.Start();
+            }
+            else
+            {
+                logger.LogError("Couldn't get BotVars for file {file}", path);
+            }
         }
         catch(Exception ex)
         {
@@ -36,7 +46,7 @@ class Programm
 
 sealed class Bot
 {
-        public BotVars botVars { internal get; pub; ic set; };
+        public static BotVars botVars { internal get; set; } = new BotVars();
         static ILogger BotLogger;
 
         public Bot(ILoggerFactory loggerFactory, BotVars ConfigBotVars)
@@ -45,11 +55,11 @@ sealed class Bot
             botVars = ConfigBotVars;
         }
 
-        static void Start()
+        public void Start()
         {
             try
             {
-                TelegramBotClient telegram_bot = new TelegramBotClient(TGtoken);
+                TelegramBotClient telegram_bot = new TelegramBotClient(botVars.TGtoken);
                 ReceiverOptions receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = new[]
@@ -70,7 +80,7 @@ sealed class Bot
 
 sealed class BotVars
 {
-    public string TGtoken { internal get; set; } = string.Empty;
-    public string? DBBaseURL { internal get; set; } = string.Empty;
-    public string? StarttupMessage { internal get; set; } = string.Empty;
+    public string TGtoken { get; set; } = string.Empty;
+    public string? DBBaseURL { get; set; } = string.Empty;
+    public string? StarttupMessage { get; set; } = string.Empty;
 }
