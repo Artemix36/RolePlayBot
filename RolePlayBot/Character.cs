@@ -1,4 +1,4 @@
-abstract class Character
+class Character
 {
     public string Name {get; set;} = string.Empty;
     public int? Age {get; set;}
