@@ -1,5 +1,4 @@
 ﻿using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Polling;
@@ -47,7 +46,7 @@ class Programm
 sealed class Bot
 {
         public static BotVars botVars { internal get; set; } = new BotVars();
-        static ILogger BotLogger;
+        private readonly ILogger BotLogger;
 
         public Bot(ILoggerFactory loggerFactory, BotVars ConfigBotVars)
         {   
@@ -83,4 +82,5 @@ sealed class BotVars
     public string TGtoken { get; set; } = string.Empty;
     public string? DBBaseURL { get; set; } = string.Empty;
     public string? StarttupMessage { get; set; } = string.Empty;
+    public string ConnectionString {get; set;} = string.Empty;
 }
