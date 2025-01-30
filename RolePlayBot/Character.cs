@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 class Character
 {
@@ -48,6 +49,33 @@ class Character
             {
                 CharacterLogger.LogError("Bad role! Can't register Character!");
                 return 0;
+            }
+        }
+    }
+    public async Task<List<Character>?> GetCharacters(string ConnectionString)
+    {
+        using (CharacterContext db = new CharacterContext(ConnectionString))
+        {
+            CharacterLogger.LogInformation("Got new request to get list of Characters. Checking if TGID is not 0");
+            if(this.TelegramID != 0 && this.TelegramID > 0)
+            {
+                CharacterLogger.LogInformation("Processing request for {TGID}", this.TelegramID);
+                List<Character>? Characters = await db.Characters.Where(c => c.TelegramID == this.TelegramID).ToListAsync();
+                if(Characters is not null)
+                {
+                    CharacterLogger.LogInformation("Found {number} characters by {TGID}", Characters.Count() ,this.TelegramID);
+                    return Characters;
+                }
+                else
+                {
+                    CharacterLogger.LogInformation("Not Found characters by {TGID}",this.TelegramID);
+                    return null;
+                }
+            }
+            else
+            {
+                CharacterLogger.LogInformation("TGID:{TGID} is invalid! Processing will be stopped", this.TelegramID);
+                return null;
             }
         }
     }

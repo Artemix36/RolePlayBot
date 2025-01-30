@@ -3,6 +3,7 @@ using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Polling;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 class Programm
 {
@@ -30,6 +31,9 @@ class Programm
             {
                 Bot RPBot = new Bot(loggerFactory, BotVars);
                 RPBot.Start();
+                Character testCharacter = new Character{Name = "MegaGAY", Age = 12, RoleID = 5, TelegramID = 1};
+                Role testRole = new Role{Name = "Fixer", Description = "Cool"};
+                testRole.AddRole(BotVars.ConnectionString);
             }
             else
             {
