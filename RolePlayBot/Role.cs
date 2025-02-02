@@ -20,7 +20,7 @@ class Role
     }
     public int AddRole(string ConnectionString)
     {
-        RoleLogger.LogInformation("Got new request to register Role {rolename}", this.Name);
+        RoleLogger.LogInformation("Got new request to add Role: {rolename}", this.Name);
 
         Role? ExistingRole = new Role();
         ExistingRole.Name = this.Name;
@@ -40,7 +40,7 @@ class Role
             }
             catch(Exception ex)
             {
-                RoleLogger.LogError("Couldn't Add New Role: {exception}", ex.Message);
+                RoleLogger.LogError("Couldn't Add New Role {Rolename} with: {exception}", Name, ex.Message);
                 return -1;
             }
         }
@@ -69,7 +69,7 @@ class Role
     {
         using (RoleContext db = new RoleContext(ConnectionString))
         {
-            RoleLogger.LogInformation("Got request to det Role by ID({ID})", ID);
+            RoleLogger.LogInformation("Got request to get Role by ID({ID})", ID);
             try
             {
                 Role? NeededRole = db.Roles.FirstOrDefault(r => r.ID == ID);
@@ -95,7 +95,7 @@ class Role
     {
         using (RoleContext db = new RoleContext(ConnectionString))
         {
-            RoleLogger.LogInformation("Got request to det Role by Name({Name})", Name);
+            RoleLogger.LogInformation("Got request to get Role by Name({Name})", Name);
             try
             {
                 Role? NeededRole = db.Roles.FirstOrDefault(r => r.Name == Name);

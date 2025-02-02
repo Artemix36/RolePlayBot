@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 class Character
 {
@@ -48,6 +49,48 @@ class Character
             {
                 CharacterLogger.LogError("Bad role! Can't register Character!");
                 return 0;
+            }
+        }
+    }
+    public async Task<List<Character>?> GetCharacters(string ConnectionString)
+    {
+        using (CharacterContext db = new CharacterContext(ConnectionString))
+        {
+            CharacterLogger.LogInformation("Got new request to get list of Characters. Checking if TGID is not 0");
+            if(TelegramID > 0)
+            {
+                CharacterLogger.LogInformation("Processing request for Characters of TGID: {TGID}", this.TelegramID);
+                List<Character>? Characters = await db.Characters.Where(c => c.TelegramID == this.TelegramID).ToListAsync();
+                if(Characters is not null)
+                {
+                    CharacterLogger.LogInformation("Found {number} characters by TGID: {TGID}", Characters.Count() ,this.TelegramID);
+                    return Characters;
+                }
+                else
+                {
+                    CharacterLogger.LogInformation("Not Found characters by TGID: {TGID}",this.TelegramID);
+                    return null;
+                }
+            }
+            if(ID > 0)
+            {
+                CharacterLogger.LogInformation("Processing request for Characters with ID: {TGID}", ID);
+                List<Character>? Characters = await db.Characters.Where(c => c.ID == ID).ToListAsync();
+                if(Characters is not null)
+                {
+                    CharacterLogger.LogInformation("Found {number} characters by ID: {TGID}", Characters.Count() , ID);
+                    return Characters;
+                }
+                else
+                {
+                    CharacterLogger.LogInformation("Not Found characters by ID: {TGID}", ID);
+                    return null;
+                }
+            }
+            else
+            {
+                CharacterLogger.LogInformation("ID or TGID:{TGID} is invalid! Processing will be stopped", TelegramID);
+                return null;
             }
         }
     }

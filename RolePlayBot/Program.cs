@@ -3,10 +3,11 @@ using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Polling;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 class Programm
 {
-    static void Main()
+    static async Task Main()
     {
         using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => 
         {
@@ -30,6 +31,17 @@ class Programm
             {
                 Bot RPBot = new Bot(loggerFactory, BotVars);
                 RPBot.Start();
+                Character testCharacter = new Character{Name = "MegaGAY", Age = 12, RoleID = 1, TelegramID = 1};
+                Role testRole = new Role{Name = "Fixer", Description = "Cool"};
+                Stat testStat = new Stat{XP = 10,CharacterID = 1, Money = 2000};
+                testStat.ChangeStat(BotVars.ConnectionString);
+                List<Character>? characters = await testCharacter.GetCharacters(BotVars.ConnectionString);
+                if(characters is not null && characters.Count != 0)
+                {
+                    testStat = testStat.GetStats(BotVars.ConnectionString);
+                    logger.LogInformation($"{testStat.Money}");
+                }
+
             }
             else
             {
