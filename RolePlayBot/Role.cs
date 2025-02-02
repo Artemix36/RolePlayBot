@@ -40,7 +40,7 @@ class Role
             }
             catch(Exception ex)
             {
-                RoleLogger.LogError("Couldn't Add New Role: {exception}", ex.Message);
+                RoleLogger.LogError("Couldn't Add New Role {Rolename} with: {exception}", Name, ex.Message);
                 return -1;
             }
         }

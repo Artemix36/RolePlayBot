@@ -75,3 +75,39 @@ class RoleContext : DbContext
         optionsBuilder.UseNpgsql(connectionString);
     }
 }
+
+class StatContext: DbContext
+{
+    private readonly string connectionString;
+    private readonly ILogger<StatContext> StatDBLogger;
+    public DbSet<Stat> Stats { get; set; }
+    public StatContext(string ConfigConnectionString)
+    {
+        StatDBLogger = LoggerFactory.Create(builder =>
+        {
+            builder.AddSimpleConsole(options =>
+            {
+                options.IncludeScopes = true;
+                options.SingleLine = true;
+                options.TimestampFormat = "HH:mm:ss ";
+            });
+            builder.AddFilter("System", LogLevel.Debug).SetMinimumLevel(LogLevel.Information);
+        }).CreateLogger<StatContext>();
+        connectionString = ConfigConnectionString ?? throw new ArgumentNullException(nameof(connectionString));
+
+        try
+        {
+            StatDBLogger.LogDebug("Connection string was supplied");
+            Database.EnsureCreated();
+        }
+        catch(Exception ex)
+        {
+            StatDBLogger.LogError("Couldn't start DBContext: {exception}, {exceptionAll}", ex.Message, ex);
+        }
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(connectionString);
+    }
+}
