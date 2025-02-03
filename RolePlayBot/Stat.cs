@@ -97,9 +97,10 @@ class Stat
             {
                 using (StatContext db = new StatContext(ConnectionString))
                 {
+                    db.Stats.Entry(this).State = EntityState.Modified;
                     db.Stats.Update(this);
-                    await db.SaveChangesAsync();
-                    StatLogger.LogInformation("Updated Stats for Character {ID}", CharacterID);
+                    db.SaveChanges();
+                    StatLogger.LogInformation("Updated Stats for Character by ID: {ID} SET: {XP} - {Money}", CharacterID, XP, Money);
                     return 1;
                 }
             }
