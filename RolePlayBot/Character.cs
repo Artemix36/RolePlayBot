@@ -94,4 +94,36 @@ class Character
             }
         }
     }
+    public async Task<int> ChangeCharacter(string ConnectionString)
+    {
+        CharacterLogger.LogInformation("Got Request to Change Character by ID: {ID}", this.ID);
+        Stat characterStat = new Stat{CharacterID = ID};
+        Role? role = new Role();
+        role.ID = RoleID;
+        role = role.GetRole(ConnectionString);
+        if(ID > 0 && await characterStat.DoesCharacterExist(ConnectionString) && role is not null)
+        {
+            try
+            {
+                using(CharacterContext db = new CharacterContext(ConnectionString))
+                {
+                    db.Characters.Entry(this).State = EntityState.Modified;
+                    db.Characters.Update(this);
+                    await db.SaveChangesAsync();
+                    CharacterLogger.LogInformation("Updated Character by ID: {ID} SET: {Name} - {Age} - {TGID} - {ROLEId}", ID, Name, Age, TelegramID, RoleID);
+                    return 1;
+                }
+            }
+            catch(Exception ex)
+            {
+                CharacterLogger.LogError("Failed to update Character with ID: {ID} with exception {exception}", ID, ex.Message);
+                return -1;
+            }
+        }
+        else
+        {
+            CharacterLogger.LogInformation("Couldn't Change Character for {ID}: ID can't be 0 or less/Character doesn't exist", ID);
+            return 0;
+        }
+    }
 }

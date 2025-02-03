@@ -31,17 +31,6 @@ class Programm
             {
                 Bot RPBot = new Bot(loggerFactory, BotVars);
                 RPBot.Start();
-                Character testCharacter = new Character{Name = "MegaGAY", Age = 12, RoleID = 1, TelegramID = 1};
-                Role testRole = new Role{Name = "Fixer", Description = "Cool"};
-                Stat testStat = new Stat{XP = 100,CharacterID = 1, Money = 500};
-                await testStat.ChangeStat(BotVars.ConnectionString);
-                List<Character>? characters = await testCharacter.GetCharacters(BotVars.ConnectionString);
-                if(characters is not null && characters.Count != 0)
-                {
-                    testStat = testStat.GetStats(BotVars.ConnectionString);
-                    logger.LogInformation($"{testStat.Money} | {testStat.XP}");
-                }
-
             }
             else
             {

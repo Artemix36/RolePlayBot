@@ -99,7 +99,7 @@ class Stat
                 {
                     db.Stats.Entry(this).State = EntityState.Modified;
                     db.Stats.Update(this);
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                     StatLogger.LogInformation("Updated Stats for Character by ID: {ID} SET: {XP} - {Money}", CharacterID, XP, Money);
                     return 1;
                 }
@@ -116,7 +116,7 @@ class Stat
             return 0;
         }
     }
-    protected async Task<bool> DoesCharacterExist(string ConnectionString)
+    public async Task<bool> DoesCharacterExist(string ConnectionString)
     {
         Character character = new Character();
         character.ID = CharacterID;
