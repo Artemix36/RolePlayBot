@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot.Polling;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using static Telegram.Bot.TelegramBotClient;
 
 class Programm
 {
@@ -69,8 +70,15 @@ sealed class Bot
                     },
                     DropPendingUpdates = true,
                 };
+
+                using var cts = new CancellationTokenSource();
+
+                MessageHandler messageHandler = new MessageHandler();
                 BotLogger.LogInformation("Bot started");
-            }
+                telegram_bot.StartReceiving(MessageHandler.UpdateHandler, MessageHandler.ErrorHandler, receiverOptions, cts.Token);
+                Console.ReadLine();
+                cts.Cancel();
+        }
             catch(Exception ex)
             {
                 BotLogger.LogError("Failed to start: {exception}", ex.Message);
